@@ -1,7 +1,8 @@
 from numpy import sin, cos
 
 __all__ = [
-    'radec2xyz'
+    'radec2xyz',
+    'rotate2plane'
 ]
 
 def radec2xyz(observation, center):
