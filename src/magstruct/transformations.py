@@ -6,8 +6,8 @@ __all__ = [
 ]
 
 def radec2xyz(observation, center):
-    t_obs, ra_obs, dec_obs = observation
-    t_cen, ra_cen, dec_cen = center
+    ra_obs, dec_obs, t_obs = observation
+    ra_cen, dec_cen, t_cen = center
 
     delta_ra = ra_obs - ra_cen
     
