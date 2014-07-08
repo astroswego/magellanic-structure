@@ -1,4 +1,6 @@
 __all__ = [
     'plane',
-    'transformations'
+    'plots',
+    'transformations',
+    'utils'
 ]
