@@ -30,7 +30,7 @@ def get_args():
 
     args = parser.parse_args()
 
-    args.fit = plane.fit if args.regression == 'OLS' else plane.lts_fit
+    args.fit = plane.fit if args.regression == 'OLS' else plane.lts_fit_idl
 
     return args
 
