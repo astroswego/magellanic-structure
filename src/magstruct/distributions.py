@@ -1,4 +1,5 @@
 from itertools import product, combinations
+import numpy
 from numpy import sqrt
 from numpy.random import choice, uniform
 
@@ -53,3 +54,31 @@ def _uvw2z(a, b, c, u, v, w):
     pm = choice([-1,1], size=u.shape, replace=True)
     return pm*sqrt((c**2+w)*(c**2+u)*(c**2+v)
                    /(c**2-b**2)/(c**2-a**2))
+
+def is_ellipsoidal(a, b, c):
+    return lambda X: (
+        (X[:,0]/a)**2 + (X[:,1]/b)**2 + (X[:,2]/c)**2 <= 1
+    )
+
+def monte_carlo(f, shape, low=0.0, high=1.0, scale=3/2, dtype=float, order='C'):
+    assert scale > 1.0
+    samples = numpy.empty(shape, dtype=dtype)
+    nsamples = 0
+    required, variables = shape
+    while nsamples < required:
+        new_generated = numpy.multiply(numpy.subtract(shape, [nsamples, 0]),
+                                       [scale, 1])
+        generated = numpy.random.uniform(low, high, new_generated)
+        satisfied = generated[f(generated), :]
+        needed = required-nsamples
+        new = min(needed, satisfied.shape[0])
+        samples[nsamples:nsamples+new, :] = satisfied[:new, :]
+        nsamples += new
+    return samples
+
+def monte_carlo_ellipsoid(a, b, c, N, *args, **kwargs):
+    f = is_ellipsoidal(a,b,c)
+    shape = (N, 3)
+    semi_major_axis = max(a,b,c)
+    return monte_carlo(f, shape, low=-semi_major_axis, high=semi_major_axis,
+                       *args, **kwargs)

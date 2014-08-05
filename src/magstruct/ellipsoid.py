@@ -24,17 +24,16 @@ def moment_of_inertia_tensor(xyz):
     ])
 
 def get_axes(eigenvalues):
-    ev_1, ev_2, ev_3 = eigenvalues
-    
+    ev1, ev2, ev3 = eigenvalues
+
     S_1 = numpy.sqrt(5/2 * (ev2 + ev3 - ev1))
     S_2 = numpy.sqrt(5/2 * (ev1 + ev3 - ev2))
     S_3 = numpy.sqrt(5/2 * (ev1 + ev2 - ev3))
 
     return S_1, S_2, S_3
     
+def inclination(eigenvectors):
+    return numpy.arccos(eigenvectors[2,2]), None
 
-def diagonalize(I):
-    eigvals, eigvecs = numpy.linalg.eig(I)
-
-    return eigvals * numpy.eye(3)
-
+def position_angle(eigenvectors):
+    return numpy.arccos(eigenvectors[0,0]), None
