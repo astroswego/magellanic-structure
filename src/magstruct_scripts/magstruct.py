@@ -1,4 +1,4 @@
-from argparse import ArgumentError, ArgumentParser, FileType
+from argparse import ArgumentError, ArgumentParser, FileType, SUPPRESS
 from magstruct import models, transformations
 from numpy import array, float as npfloat, loadtxt, savetxt
 from os import path
@@ -51,7 +51,14 @@ def main():
     ellipsoid = Pipeline([('Cartesian', eq2cart),
                           ('Ellipsoid', models.Ellipsoid())])
 
-    exit(print(plane.fit_transform(equatorial_coordinates)))
+    (a, b, c), (i, theta) = plane.fit_transform(equatorial_coordinates)
+
+    print('(a, b, c) =', ', '.join(map(str,(a, b, c))))
+    print('(i, theta) =', ', '.join(map(lambda x: str(numpy.rad2deg(x)),
+                                        (i, theta))))
+
+    
+    exit()
 
     
     cartesian_coordinates = eq2cart.transform(equatorial_coordinates)

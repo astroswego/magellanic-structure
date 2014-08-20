@@ -1,7 +1,7 @@
 import numpy
 from sklearn.linear_model import LinearRegression
 
-class Plane():
+class Plane(object):
     def __init__(self, regressor=LinearRegression(fit_intercept=True)):
         self.regressor = regressor
 
@@ -33,12 +33,17 @@ class Plane():
         a, b, c = coef
 
         i = numpy.arccos((1 + a**2 + b**2)**(-1/2))
-        theta = numpy.nan
+        # generalize more because of a == 0 and b == 0 cases
+        theta = -numpy.arctan(-a/b) + (
+            0          if a > 0 and b > 0 else
+            numpy.pi   if b < 0 else
+            2*numpy.pi
+        )
 
         return i, theta
 
 
-class Ellipsoid():
+class Ellipsoid(object):
     def __init__(self):
         pass
 
@@ -46,13 +51,31 @@ class Ellipsoid():
         return self
 
     def transform(self, X, y=None):
-        self.I = self.inertia_tensor(X)
+        self.I = self.inertia_tensor_3d(X)
 
         evals, evecs = numpy.linalg.cov(self.I)
 
+    @staticmethod
+    def inertia_tensor_2d(X):
+        x, y, z = X.T
+
+        return numpy.cov(x, y, bias=0)
+
+        # cov_xx = numpy.cov(x, bias=0)
+        # cov_yy = numpy.cov(y, bias=0)
+        # cov_xy = numpy.cov(x, y, bias=0)[0][1]
+
+        # I_xx = cov_yy + cov_zz
+        # I_yy = cov_xx + cov_zz
+        # I_xy = I_yx = cov_xy
+
+        # return numpy.array([
+        #     [ I_xx, -I_xy],
+        #     [-I_xy,  I_yy]
+        # ])
 
     @staticmethod
-    def inertia_tensor(X):
+    def inertia_tensor_3d(X):
         x, y, z = X.T
 
         cov_xx = numpy.cov(x, bias=0)
@@ -74,3 +97,13 @@ class Ellipsoid():
             [-I_yx,  I_yy,  I_yz],
             [-I_zx, -I_zy,  I_zz]
         ])
+
+    @staticmethod
+    def semi_axes(eigenvalues):
+        e1, e2, e3 = eigenvalues
+
+        S1 = numpy.sqrt(2.5 * (e2 + e3 - e1))
+        S2 = numpy.sqrt(2.5 * (e1 + e3 - e2))
+        S3 = numpy.sqrt(2.5 * (e1 + e2 - e3))
+
+        return S1, S2, S3
