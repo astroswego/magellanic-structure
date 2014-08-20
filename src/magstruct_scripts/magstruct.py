@@ -3,14 +3,8 @@ from magstruct import models, transformations
 from numpy import array, float as npfloat, loadtxt, savetxt
 from os import path
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import numpy
-from numpy import pi, meshgrid, dot
-from numpy.linalg import eig
-#from magstruct.utils import demean
 from sklearn.pipeline import Pipeline
-
-rad2deg = 180/pi
 
 def get_args():
     parser = ArgumentParser()
