@@ -1,5 +1,6 @@
 import numpy
 from sklearn.linear_model import LinearRegression
+from magstruct.utils import arctan2
 
 class Plane(object):
     def __init__(self, regressor=LinearRegression(fit_intercept=True)):
@@ -33,12 +34,7 @@ class Plane(object):
         a, b, c = coef
 
         i = numpy.arccos((1 + a**2 + b**2)**(-1/2))
-        # generalize more because of a == 0 and b == 0 cases
-        theta = -numpy.arctan(-a/b) + (
-            0          if a > 0 and b > 0 else
-            numpy.pi   if b < 0 else
-            2*numpy.pi
-        )
+        theta = arctan2(a, b)
 
         return i, theta
 
@@ -53,7 +49,9 @@ class Ellipsoid(object):
     def transform(self, X, y=None):
         self.I = self.inertia_tensor_3d(X)
 
-        evals, evecs = numpy.linalg.cov(self.I)
+        self.evals, self.evecs = numpy.linalg.eig(self.I)
+
+        return self.semi_axes(self.evals), self.rotations(self.evecs)
 
     @staticmethod
     def inertia_tensor_2d(X):
@@ -107,3 +105,15 @@ class Ellipsoid(object):
         S3 = numpy.sqrt(2.5 * (e1 + e2 - e3))
 
         return S1, S2, S3
+
+    @staticmethod
+    def rotations(eigenvectors):
+        sin_i = -eigenvectors[1,2]
+        cos_i =  eigenvectors[2,2]
+        sin_theta = eigenvectors[0,1]
+        cos_theta = eigenvectors[0,0]
+
+        i = arctan2(sin_i, cos_i)
+        theta = arctan2(sin_theta, cos_theta)
+        
+        return i, theta

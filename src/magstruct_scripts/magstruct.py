@@ -51,6 +51,14 @@ def main():
     print('(i, theta) =', ', '.join(map(lambda x: str(numpy.rad2deg(x)),
                                         (i, theta))))
 
+    (S_1, S_2, S_3), (i, theta) = ellipsoid.fit_transform(
+        equatorial_coordinates)
+
+    print('(S_1, S_2, S_3) =', ', '.join(map(str,(S_1, S_2, S_3))))
+    print('(i, theta) =', ', '.join(map(lambda x: str(numpy.rad2deg(x)),
+                                        (i, theta))))
+    print('T =', ellipsoid.named_steps['Ellipsoid'].evecs)
+
     
     exit()
 
